@@ -2,95 +2,62 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>App Cài Đặt iOS</title>
+  <title>Sao chép ID & MK</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-    h1 { color: #2c3e50; }
-    p { color: #555; }
-    .box { margin: 20px auto; width: 400px; max-width: 90%; text-align: left; }
-    input, button { width: 100%; padding: 10px; margin: 5px 0; }
-    button { background: #2c3e50; color: white; border: none; cursor: pointer; }
-    button:hover { background: #34495e; }
-    .result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; word-break: break-all; }
+    .box {
+      background: rgb(249, 249, 249);
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+      max-width: 300px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    .row {
+      margin-bottom: 15px;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .value {
+      margin-left: 5px;
+      font-weight: bold;
+      color: red; /* chữ đỏ đậm */
+    }
+    button {
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-top: 5px;
+      display: block; /* ép nút xuống hàng */
+    }
   </style>
 </head>
 <body>
-  <h1>Tạo link cài đặt IPA</h1>
-  <div class="box">
-    <label>Link IPA (.ipa):</label>
-    <input type="text" id="ipaUrl" placeholder="https://...ipa">
-    
-    <label>Tên ứng dụng:</label>
-    <input type="text" id="appName" placeholder="Tên hiển thị">
-    
-    <label>Bundle ID:</label>
-    <input type="text" id="bundleId" placeholder="com.example.app">
-    
-    <label>Version:</label>
-    <input type="text" id="version" placeholder="1.0.0">
-    
-    <button onclick="generateLink()">Tạo link cài đặt</button>
+
+<div class="box">
+  <div class="row">
+    <span class="label">ID:</span>
+    <span id="copyID" class="value">vanchinhsy8899@gmail.com</span>
+    <button onclick="copyToClipboard('copyID')">📋 Sao chép ID</button>
   </div>
+  <div class="row">
+    <span class="label">MK:</span>
+    <span id="copyMK" class="value">Camlong129</span>
+    <button onclick="copyToClipboard('copyMK')">📋 Sao chép MK</button>
+  </div>
+</div>
 
-  <div class="result" id="result"></div>
+<script>
+function copyToClipboard(elementId) {
+  const text = document.getElementById(elementId).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Đã sao chép: ' + text);
+  }).catch(err => {
+    alert('Lỗi khi sao chép: ' + err);
+  });
+}
+</script>
 
-  <script>
-    function generateLink() {
-      const ipaUrl = document.getElementById("ipaUrl").value;
-      const appName = document.getElementById("appName").value;
-      const bundleId = document.getElementById("bundleId").value;
-      const version = document.getElementById("version").value;
-
-      const plist = `
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>items</key>
-  <array>
-    <dict>
-      <key>assets</key>
-      <array>
-        <dict>
-          <key>kind</key>
-          <string>software-package</string>
-          <key>url</key>
-          <string>${ipaUrl}</string>
-        </dict>
-        <dict>
-          <key>kind</key>
-          <string>display-image</string>
-          <key>needs-shine</key>
-          <false/>
-          <key>url</key>
-          <string>https://nhut11790.github.io/ipacaidat/logo.png</string>
-        </dict>
-      </array>
-      <key>metadata</key>
-      <dict>
-        <key>bundle-identifier</key>
-        <string>${bundleId}</string>
-        <key>bundle-version</key>
-        <string>${version}</string>
-        <key>kind</key>
-        <string>software</string>
-        <key>title</key>
-        <string>${appName}</string>
-      </dict>
-    </dict>
-  </array>
-</dict>
-</plist>`;
-
-      const blob = new Blob([plist], { type: "text/xml" });
-      const plistUrl = URL.createObjectURL(blob);
-      const installUrl = `itms-services://?action=download-manifest&url=${plistUrl}`;
-      
-      document.getElementById("result").innerHTML = `
-        <p><b>Link cài đặt:</b></p>
-        <a href="${installUrl}">${installUrl}</a>
-      `;
-    }
-  </script>
 </body>
 </html>
